@@ -1,39 +1,36 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../store/slices/authSlice';
-import { signIn } from '../lib/api';
 import Container from '../components/common/Container';
+import { signIn } from '../lib/api';
+import { setUser } from '../store/slices/authSlice';
+import LoginForm from '../components/auth/LoginForm';
+import HeartIcon from '../assets/svg/HeartIcon';
 
 export default function LoginScreen({ navigation }) {
-  const dispatch = useDispatch();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-  const handleLogin = async () => {
-    try {
-      const user = await signIn(email, password);
-      dispatch(setUser(user));
-      navigation.navigate('Home');
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
 
   return (
-    <Container>
-      {error ? <Text>{error}</Text> : null}
-      <TextInput style={styles.container} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
-      <TextInput style={styles.container} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
-      <Button title="Login" onPress={handleLogin} />
-      <Button title="Go to Signup" onPress={() => navigation.navigate('Signup')} />
+    <Container scroll>
+      <View>
+        <View style={{ alignItems: 'center', marginTop: 40 }}>
+          <HeartIcon />
+        </View>
+        <Text style={styles.title}>Murmur</Text>
+      </View>
+      <LoginForm />
     </Container>
   );
 }
 
 
 const styles = StyleSheet.create({
+  title: {
+    textAlign: 'center',
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 40,
+  },
   container: {
     height: 40,
     width: '95%',

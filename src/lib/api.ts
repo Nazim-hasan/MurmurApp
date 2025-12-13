@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 
-export async function signUp(email: string, password: string, name: string, username: string) {
+export async function signUp(email: string, password: string, name: string) {
   const { data, error } = await supabase.auth.signUp({ email, password });
 
   if (error) throw error;
@@ -8,7 +8,6 @@ export async function signUp(email: string, password: string, name: string, user
   await supabase.from('users').insert({
     id: data.user.id,
     name,
-    username
   });
 
   return data.user;
