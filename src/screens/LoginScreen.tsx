@@ -3,6 +3,7 @@ import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../store/slices/authSlice';
 import { signIn } from '../lib/api';
+import Container from '../components/common/Container';
 
 export default function LoginScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -21,13 +22,13 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <View>
+    <Container>
       {error ? <Text>{error}</Text> : null}
       <TextInput style={styles.container} placeholder="Email" value={email} onChangeText={setEmail} keyboardType="email-address" />
       <TextInput style={styles.container} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
       <Button title="Login" onPress={handleLogin} />
       <Button title="Go to Signup" onPress={() => navigation.navigate('Signup')} />
-    </View>
+    </Container>
   );
 }
 
