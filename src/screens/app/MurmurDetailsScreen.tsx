@@ -28,6 +28,12 @@ const MurmurDetailsScreen = () => {
     initialLikeCount: murmur?.like_count,
   });
 
+    const handleNavigateToProfile = () => {
+    navigation.navigate('FriendsProfile', {
+      friendId: murmur?.users?.id,
+    });
+  };
+
   return (
     <View
       style={[
@@ -38,7 +44,7 @@ const MurmurDetailsScreen = () => {
       ]}
     >
       <View style={styles.header}>
-        <View style={styles.userInfo}>
+        <TouchableOpacity style={styles.userInfo} onPress={handleNavigateToProfile}>
           <FastImage
             source={{
               uri:
@@ -47,7 +53,7 @@ const MurmurDetailsScreen = () => {
             style={styles.avatar}
           />
           <Text style={styles.name}>{murmur?.users?.name}</Text>
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity onPress={handleClose}>
           <CloseIcon />
         </TouchableOpacity>

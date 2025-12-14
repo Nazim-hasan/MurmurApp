@@ -7,4 +7,5 @@ export type TMurmur = {
     name: string;
     avatar_url?: string;
   };
+  liked_by_user?: boolean;
 };

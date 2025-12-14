@@ -1,12 +1,11 @@
 import { getCurrentUser } from './api';
 import { supabase } from './supabase';
 
-export const fetchFollowedIds = async () => {
-  const user = await getCurrentUser();
+export const fetchFollowedIds = async userId => {
   const { data, error } = await supabase
     .from('follows')
     .select('followed_id')
-    .eq('follower_id', user?.id);
+    .eq('follower_id', userId);
 
   if (!error && data) {
     const followedIds = data.map((f: any) => f.followed_id);
@@ -44,4 +43,15 @@ export const unfollowFriendById = async (friendId: string) => {
     .eq('follower_id', currentUser?.id)
     .eq('followed_id', friendId);
   return unfollowError;
+};
+
+export const getAllRecentUsers = async (currentUser: any) => {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, name, avatar_url, follower_count, following_count')
+    .neq('id', currentUser?.id);
+  if (!error && data) {
+    return data;
+  }
+  return [];
 };
