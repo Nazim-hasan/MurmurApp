@@ -2,10 +2,10 @@
 
 A feature-rich React Native mobile application for posting and interacting with "murmurs" (short messages similar to tweets), with full authentication and offline support.
 
-![React Native](https://img.shields.io/badge/React%20Native-0.82+-blue.svg)
+![React Native](https://img.shields.io/badge/React%20Native-0.83+-blue.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)
 ![Redux](https://img.shields.io/badge/Redux%20Toolkit-2.0+-purple.svg)
-![Supabase](https://img.shields.io/badge/Supabase-1.0+-green.svg)
+![Supabase](https://img.shields.io/badge/Supabase-2.0+-green.svg)
 ![MMKV](https://img.shields.io/badge/MMKV-2.0+-yellow.svg)
 
 ## ✨ Features
