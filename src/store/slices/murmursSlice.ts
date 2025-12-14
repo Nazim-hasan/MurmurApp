@@ -42,9 +42,12 @@ const murmursSlice = createSlice({
     decrementLike(state, action: PayloadAction<string>) {
       const murmur = state.timeline.find(m => m.id === action.payload);
       if (murmur) murmur.like_count -= 1;
-    }
+    },
+    addMurmurToTop(state, action: PayloadAction<Murmur>) {
+      state.timeline.unshift(action.payload);
+    },
   }
 });
 
-export const { setTimeline, appendTimeline, incrementLike, decrementLike } = murmursSlice.actions;
+export const { setTimeline, appendTimeline, incrementLike, decrementLike, addMurmurToTop } = murmursSlice.actions;
 export default murmursSlice.reducer;
