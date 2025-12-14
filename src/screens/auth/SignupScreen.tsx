@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import HeartIcon from '../assets/svg/HeartIcon';
-import SignupForm from '../components/auth/SignupForm';
-import Container from '../components/common/Container';
+import HeartIcon from '../../assets/svg/HeartIcon';
+import SignupForm from '../../components/auth/SignupForm';
+import Container from '../../components/common/Container';
 
 export default function SignupScreen() {
 

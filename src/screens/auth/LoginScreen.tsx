@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useDispatch } from 'react-redux';
-import Container from '../components/common/Container';
-import { signIn } from '../lib/api';
-import { setUser } from '../store/slices/authSlice';
-import LoginForm from '../components/auth/LoginForm';
-import HeartIcon from '../assets/svg/HeartIcon';
+import Container from '../../components/common/Container';
+import { signIn } from '../../lib/api';
+import { setUser } from '../../store/slices/authSlice';
+import LoginForm from '../../components/auth/LoginForm';
+import HeartIcon from '../../assets/svg/HeartIcon';
 
 export default function LoginScreen({ navigation }) {
 

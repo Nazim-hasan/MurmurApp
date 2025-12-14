@@ -1,10 +1,16 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useDispatch } from 'react-redux';
 import PersonIcon from '../../assets/svg/PersonIcon';
 import Container from '../../components/common/Container';
-import { useAppSelector } from '../../hooks/hooks';
 import { createMurmur } from '../../lib/murmurApi';
 import { addMurmurToTop } from '../../store/slices/murmursSlice';
 import { Theme } from '../../theme/Theme';
@@ -14,9 +20,9 @@ const CreateMurmurScreen = () => {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-
-    const user = useAppSelector(state => state.auth.user);
-    console.log('user', user)
+  const handleBack = () => {
+    navigation.goBack();
+  };
 
   const handlePost = async () => {
     if (!text.trim()) {
@@ -39,7 +45,9 @@ const CreateMurmurScreen = () => {
   return (
     <Container>
       <View style={styles.header}>
-        <Text>Cancel</Text>
+        <TouchableOpacity onPress={handleBack}>
+          <Text>Cancel</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={handlePost} style={styles.postButton}>
           <Text style={styles.postText}>Post</Text>
         </TouchableOpacity>
