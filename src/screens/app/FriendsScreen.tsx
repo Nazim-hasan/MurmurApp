@@ -11,6 +11,7 @@ import {
 import { supabase } from '../../lib/supabase';
 import { useAppSelector } from '../../hooks/hooks';
 import Container from '../../components/common/Container';
+import { fetchFollowedIds } from '../../lib/friendApi';
 
 type User = {
   id: string;
@@ -29,8 +30,13 @@ const FriendsScreen = () => {
 
   useEffect(() => {
     fetchUsers();
-    fetchFollowedIds();
+    getFollowerIds();
   }, []);
+
+  const getFollowerIds = async () => {
+    const ids = await fetchFollowedIds();
+    setFollowIds(ids || []);
+  }
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -41,17 +47,6 @@ const FriendsScreen = () => {
 
     if (!error && data) setUsers(data);
     setLoading(false);
-  };
-
-  const fetchFollowedIds = async () => {
-    const { data, error } = await supabase
-      .from('follows')
-      .select('followed_id')
-      .eq('follower_id', currentUser?.id);
-
-    if (!error && data) {
-      setFollowIds(data.map((f: any) => f.followed_id));
-    }
   };
 
   const handleFollowToggle = async (userId: string) => {

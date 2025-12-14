@@ -6,46 +6,80 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import Murmur from '../../components/app/murmur/Murmur';
 import Container from '../../components/common/Container';
 import { getTimeline } from '../../lib/murmurApi';
+import { Theme } from '../../theme/Theme';
 import { TMurmur } from '../../types';
 
+const LIMIT = 10;
 
 export default function HomeScreen() {
   const [timeline, setTimeline] = useState<TMurmur[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
   const navigation = useNavigation();
 
   useEffect(() => {
-    loadTimeline();
+    loadTimeline(0, true);
   }, []);
 
-  const loadTimeline = async () => {
+  const loadTimeline = async (pageNumber: number, reset = false) => {
+    if (loading || (!hasMore && !reset)) return;
+
     setLoading(true);
+
     try {
-      const data = await getTimeline(10, 0);
-      setTimeline(data);
+      const offset = pageNumber * LIMIT;
+      const data = await getTimeline(LIMIT, offset);
+
+      setTimeline(prev =>
+        reset ? data : [...prev, ...data],
+      );
+
+      setHasMore(data.length === LIMIT);
+      setPage(pageNumber);
     } catch (err: any) {
       console.log('Error fetching murmurs:', err.message);
     }
+
     setLoading(false);
+    if (reset) setRefreshing(false);
   };
 
-  const renderItem = ({ item }: { item: TMurmur }) => <Murmur item={item} />;
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setHasMore(true);
+    loadTimeline(0, true);
+  };
+
+  const handleLoadMore = () => {
+    if (!loading && hasMore) {
+      loadTimeline(page + 1);
+    }
+  };
+
+  const renderItem = ({ item }: { item: TMurmur }) => (
+    <Murmur item={item} />
+  );
+
+  const navigateToFriends = () => {
+    navigation.navigate('Friends' as never);
+  };
+
+  const handleCreate = () => {
+    navigation.navigate('CreateMurmur' as never);
+  }
 
   return (
     <>
-      <Container
-        containerStyle={{
-          flex: 1,
-        }}
-      >
-        {loading && timeline?.length === 0 ? (
+      <Container containerStyle={{ flex: 1 }}>
+        {loading && timeline.length === 0 ? (
           <ActivityIndicator style={{ marginTop: 50 }} size="large" />
         ) : (
           <FlatList
@@ -53,21 +87,36 @@ export default function HomeScreen() {
             keyExtractor={item => item.id}
             renderItem={renderItem}
             refreshing={refreshing}
-            onRefresh={loadTimeline}
-            style={{ flex: 1 }}
+            onRefresh={handleRefresh}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={
+              loading && timeline.length > 0 ? (
+                <ActivityIndicator style={{ marginVertical: 16 }} />
+              ) : null
+            }
             ListEmptyComponent={
               <View style={{ marginTop: 50, alignItems: 'center' }}>
                 <Text>No murmurs yet.</Text>
+                <Text>
+                  Follow{' '}
+                  <Text
+                    onPress={navigateToFriends}
+                    style={styles.friendLink}
+                  >
+                    friends
+                  </Text>{' '}
+                  to see their murmurs here.
+                </Text>
               </View>
             }
           />
         )}
       </Container>
 
-      {/* Floating + Button */}
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => navigation.navigate('CreateMurmur')}
+        onPress={handleCreate}
         activeOpacity={0.8}
       >
         <Text style={styles.fabText}>+</Text>
@@ -75,6 +124,7 @@ export default function HomeScreen() {
     </>
   );
 }
+
 
 const styles = StyleSheet.create({
   fab: {
@@ -97,5 +147,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 28,
     fontWeight: '600',
+  },
+  friendLink: {
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+    color: Theme.colors.primary,
+    lineHeight: 20,
   },
 });
