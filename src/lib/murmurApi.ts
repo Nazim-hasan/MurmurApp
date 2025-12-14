@@ -1,3 +1,4 @@
+import { getCurrentUser } from './api';
 import { supabase } from './supabase';
 
 export async function getTimeline(page = 0, pageSize = 10, followedIds: string[] = []) {
@@ -46,3 +47,37 @@ export async function toggleLike(murmurId: string) {
     return true; // liked
   }
 }
+
+
+export const createMurmur = async (text: string) => {
+  const user = await getCurrentUser();
+  if (!user) throw new Error('Not authenticated');
+  const { data, error } = await supabase
+    .from('murmurs')
+    .insert({
+      text,
+      author_id: user.id,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+};
+
+
+export const getMyMurmurs = async () => {
+  const user = await getCurrentUser();
+  const { data } = await supabase
+    .from('murmurs')
+    .select('*')
+    .eq('user_id', user?.id)
+    .order('created_at', { ascending: false });
+
+  return data;
+};
+
+export const deleteMurmur = async (id: string) => {
+  await supabase.from('murmurs').delete().eq('id', id);
+};

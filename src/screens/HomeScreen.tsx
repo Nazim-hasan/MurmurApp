@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, Text, Button, ActivityIndicator, TouchableOpacity, Pressable } from 'react-native';
+import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../store';
-import { setTimeline, appendTimeline, incrementLike, decrementLike } from '../store/slices/murmursSlice';
+import { AppDispatch, RootState } from '../store';
+import { appendTimeline, decrementLike, incrementLike, setTimeline } from '../store/slices/murmursSlice';
 
-import { supabase } from '../lib/supabase';
-import { getTimeline, toggleLike } from '../lib/murmurApi';
 import Container from '../components/common/Container';
+import { getTimeline, toggleLike } from '../lib/murmurApi';
+import { supabase } from '../lib/supabase';
 
 export default function HomeScreen() {
   const dispatch = useDispatch<AppDispatch>();
@@ -69,11 +69,11 @@ export default function HomeScreen() {
 
   const renderItem = ({ item }: any) => (
     <View style={{ padding: 10, borderBottomWidth: 1, borderColor: '#ccc' }}>
-      <Text style={{ fontWeight: 'bold' }}>{item.author_name || 'Unknown'}</Text>
-      <Text>{item.text}</Text>
+      <Text style={{ fontWeight: 'bold' }}>{item?.author_name || 'Unknown'}</Text>
+      <Text>{item?.text}</Text>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-        <Text>{item.like_count} Likes</Text>
-        <TouchableOpacity onPress={() => handleLike(item.id)} style={{ marginLeft: 10 }}>
+        <Text>{item?.like_count} Likes</Text>
+        <TouchableOpacity onPress={() => handleLike(item?.id)} style={{ marginLeft: 10 }}>
           <Text style={{ color: 'blue' }}>Like</Text>
         </TouchableOpacity>
       </View>
@@ -100,7 +100,7 @@ export default function HomeScreen() {
       
         <FlatList
           data={timeline}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item?.id}
           renderItem={renderItem}
           // onEndReached={() => {
           //   if (hasMore && !loading) loadTimeline(page + 1);
