@@ -1,29 +1,37 @@
 import FastImage from '@d11/react-native-fast-image';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
   FlatList,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import Container from '../../components/common/Container';
+import ArrowLeft from '../../assets/svg/ArrowLeft';
 import Murmur from '../../components/app/murmur/Murmur';
-import { getUserById } from '../../lib/userApi';
+import Container from '../../components/common/Container';
+import {
+  checkIfFollowing,
+  followFriendById,
+  unfollowFriendById,
+} from '../../lib/friendApi';
 import { getMurmursByUserId } from '../../lib/murmurApi';
+import { getUserById } from '../../lib/userApi';
 import { Theme } from '../../theme/Theme';
-import { checkIfFollowing, followFriendById, unfollowFriendById } from '../../lib/friendApi';
+import { useAppSelector } from '../../hooks/hooks';
 
 const FriendsProfileScreen = () => {
   const route = useRoute<any>();
+  const navigation = useNavigation<any>();
+
+  const user = useAppSelector(state => state.auth.user);
   const friendId = route.params?.friendId;
 
   const [userDetail, setUserDetail] = useState<any>(null);
   const [murmurs, setMurmurs] = useState<any[]>([]);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
-
-
 
   const getUserInfo = async () => {
     const user = await getUserById(friendId);
@@ -32,58 +40,63 @@ const FriendsProfileScreen = () => {
     setMurmurs(murmurList);
   };
 
-
-
   useEffect(() => {
     if (friendId) {
       getUserInfo();
-      checkIfFollowing(friendId).then((status) => {
+      checkIfFollowing(friendId).then(status => {
         setIsFollowing(status);
       });
-    };
+    }
   }, [friendId]);
 
-
-    const handleFollowToggle = async () => {
-  
-      if (isFollowing) {
-        await unfollowFriendById(friendId);
-        setIsFollowing(false);
-      } else {
-        await followFriendById(friendId);
-        setIsFollowing(true);
-      }
-    };
-
+  const handleFollowToggle = async () => {
+    if (isFollowing) {
+      await unfollowFriendById(friendId);
+      setIsFollowing(false);
+    } else {
+      await followFriendById(friendId);
+      setIsFollowing(true);
+    }
+  };
 
   const renderItem = ({ item }: any) => <Murmur item={item} />;
 
+  const handleBack = () => {
+    navigation.goBack();
+  };
+
   return (
-    <Container containerStyle={{
-      flex: 1,
-    }}>
-      {/* Cover */}
+    <Container
+      containerStyle={{
+        flex: 1,
+      }}
+    >
+      <TouchableOpacity
+        onPress={handleBack}
+        style={[
+          styles.backBtn,
+          {
+            margin: Platform.OS === 'ios' ? 20 : 10,
+          },
+        ]}
+      >
+        <ArrowLeft />
+      </TouchableOpacity>
       <View style={styles.coverContainer}>
         <View style={styles.coverImage} />
 
-        {/* Avatar */}
         <View style={styles.avatarWrapper}>
           <FastImage
             source={{
-              uri:
-                userDetail?.avatar_url ||
-                'https://i.pravatar.cc/150?img=12',
+              uri: userDetail?.avatar_url || 'https://i.pravatar.cc/150?img=12',
             }}
             style={styles.avatar}
           />
         </View>
       </View>
 
-      {/* Profile Info */}
       <View style={styles.profileInfo}>
-        <Text style={styles.nameText}>
-          {userDetail?.name || 'Anonymous'}
-        </Text>
+        <Text style={styles.nameText}>{userDetail?.name || 'Anonymous'}</Text>
 
         <View style={styles.followRow}>
           <View style={styles.followItem}>
@@ -101,23 +114,29 @@ const FriendsProfileScreen = () => {
           </View>
         </View>
 
-        {/* Follow Button (logic-ready) */}
-        <TouchableOpacity style={styles.followButton} onPress={handleFollowToggle}>
-          <Text style={styles.followButtonText}>{isFollowing ? 'Unfollow' : 'Follow'}</Text>
-        </TouchableOpacity>
+        {user?.id !== userDetail?.id && (
+          <TouchableOpacity
+            style={styles.followButton}
+            onPress={handleFollowToggle}
+          >
+            <Text style={styles.followButtonText}>
+              {isFollowing ? 'Unfollow' : 'Follow'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
-      {/* Murmurs */}
       <View style={styles.murmurSection}>
-
         <FlatList
           data={murmurs}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           renderItem={renderItem}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <Text style={styles.emptyText}>
-              {isFollowing ? 'No murmurs yet.' : 'Follow user to see their murmurs.'}
+              {isFollowing
+                ? 'No murmurs yet.'
+                : 'Follow user to see their murmurs.'}
             </Text>
           }
         />
@@ -128,8 +147,11 @@ const FriendsProfileScreen = () => {
 
 export default FriendsProfileScreen;
 
-
 const styles = StyleSheet.create({
+  backBtn: {
+    marginBottom: 10,
+    marginLeft: 10,
+  },
   coverContainer: {
     height: 140,
     backgroundColor: '#f0f0f0',

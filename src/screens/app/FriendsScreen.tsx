@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Image,
-  ActivityIndicator,
 } from 'react-native';
-import { supabase } from '../../lib/supabase';
-import { useAppSelector } from '../../hooks/hooks';
 import Container from '../../components/common/Container';
-import { fetchFollowedIds } from '../../lib/friendApi';
+import { useAppSelector } from '../../hooks/hooks';
+import {
+  fetchFollowedIds,
+  followFriendById,
+  getAllRecentUsers,
+  unfollowFriendById,
+} from '../../lib/friendApi';
 
 type User = {
   id: string;
@@ -34,18 +38,19 @@ const FriendsScreen = () => {
   }, []);
 
   const getFollowerIds = async () => {
-    const ids = await fetchFollowedIds();
+    const ids = await fetchFollowedIds(currentUser?.id);
     setFollowIds(ids || []);
-  }
+  };
 
   const fetchUsers = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('users')
-      .select('id, name, avatar_url, follower_count, following_count')
-      .neq('id', currentUser?.id);
 
-    if (!error && data) setUsers(data);
+
+    const data = await getAllRecentUsers(currentUser);
+    if (data) setUsers(data);
+
+
+
     setLoading(false);
   };
 
@@ -53,27 +58,17 @@ const FriendsScreen = () => {
     const isFollowing = followIds.includes(userId);
 
     if (isFollowing) {
-      // Unfollow
-      const { error: unfollowError } = await supabase
-        .from('follows')
-        .delete()
-        .eq('follower_id', currentUser?.id)
-        .eq('followed_id', userId);
+      const unfollowError = await unfollowFriendById(userId);
 
       if (!unfollowError) {
         setFollowIds(prev => prev.filter(id => id !== userId));
-        // Refetch users to get updated counts
         fetchUsers();
       }
     } else {
-      // Follow
-      const { error: followError } = await supabase
-        .from('follows')
-        .insert([{ follower_id: currentUser?.id, followed_id: userId }]);
+      const followError = await followFriendById(userId);
 
       if (!followError) {
         setFollowIds(prev => [...prev, userId]);
-        // Refetch users to get updated counts
         fetchUsers();
       }
     }
@@ -85,26 +80,35 @@ const FriendsScreen = () => {
     return (
       <View style={styles.userItem}>
         <Image
-          source={{ uri: item.avatar_url || 'https://i.pravatar.cc/150?img=12' }}
+          source={{
+            uri: item.avatar_url || 'https://i.pravatar.cc/150?img=12',
+          }}
           style={styles.avatar}
         />
         <View style={{ flex: 1 }}>
           <Text style={styles.name}>{item.name}</Text>
           <Text style={styles.subText}>
-            Followers: {item.follower_count || 0} | Following: {item.following_count || 0}
+            Followers: {item.follower_count || 0} | Following:{' '}
+            {item.following_count || 0}
           </Text>
         </View>
         <TouchableOpacity
-          style={[styles.button, isFollowing ? styles.unfollowBtn : styles.followBtn]}
+          style={[
+            styles.button,
+            isFollowing ? styles.unfollowBtn : styles.followBtn,
+          ]}
           onPress={() => handleFollowToggle(item.id)}
         >
-          <Text style={styles.buttonText}>{isFollowing ? 'Unfollow' : 'Follow'}</Text>
+          <Text style={styles.buttonText}>
+            {isFollowing ? 'Unfollow' : 'Follow'}
+          </Text>
         </TouchableOpacity>
       </View>
     );
   };
 
-  if (loading) return <ActivityIndicator style={{ marginTop: 20 }} size="large" />;
+  if (loading)
+    return <ActivityIndicator style={{ marginTop: 20 }} size="large" />;
 
   return (
     <Container>

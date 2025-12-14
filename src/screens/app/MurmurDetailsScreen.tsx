@@ -11,8 +11,10 @@ import {
 import CloseIcon from '../../assets/svg/CloseIcon';
 import { useLikeToggle } from '../../hooks/useLikeToggle';
 import { Theme } from '../../theme/Theme';
+import { useAppSelector } from '../../hooks/hooks';
 
 const MurmurDetailsScreen = () => {
+  const user = useAppSelector(state => state.auth.user);
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
 
@@ -28,6 +30,12 @@ const MurmurDetailsScreen = () => {
     initialLikeCount: murmur?.like_count,
   });
 
+    const handleNavigateToProfile = () => {
+    navigation.navigate('FriendsProfile', {
+      friendId: murmur?.users?.id,
+    });
+  };
+
   return (
     <View
       style={[
@@ -38,7 +46,7 @@ const MurmurDetailsScreen = () => {
       ]}
     >
       <View style={styles.header}>
-        <View style={styles.userInfo}>
+        <TouchableOpacity style={styles.userInfo} onPress={handleNavigateToProfile}>
           <FastImage
             source={{
               uri:
@@ -47,7 +55,7 @@ const MurmurDetailsScreen = () => {
             style={styles.avatar}
           />
           <Text style={styles.name}>{murmur?.users?.name}</Text>
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity onPress={handleClose}>
           <CloseIcon />
         </TouchableOpacity>
