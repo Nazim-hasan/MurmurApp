@@ -52,30 +52,6 @@ export const getTimeline = async (
   }));
 };
 
-export async function toggleLike(murmurId: string) {
-  const { data: userData } = await supabase.auth.getUser();
-  const user = userData.user;
-  if (!user) throw new Error('Not authenticated');
-
-  const { data: existingLike } = await supabase
-    .from('likes')
-    .select('*')
-    .match({ user_id: user.id, murmur_id: murmurId })
-    .single();
-
-  if (existingLike) {
-    await supabase
-      .from('likes')
-      .delete()
-      .match({ user_id: user.id, murmur_id: murmurId });
-    return false; // unliked
-  } else {
-    await supabase
-      .from('likes')
-      .insert({ user_id: user.id, murmur_id: murmurId });
-    return true; // liked
-  }
-}
 
 export const createMurmur = async (text: string) => {
   const user = await getCurrentUser();
@@ -104,6 +80,26 @@ export const getMyMurmurs = async () => {
 
   return data;
 };
+export const getMurmursByUserId = async (userId: string) => {
+  const { data } = await supabase
+    .from('murmurs')
+    .select(
+      `
+      id,
+      text,
+      like_count,
+      created_at,
+      users!author_id (id, name, avatar_url)
+    `,)
+    .eq('author_id', userId)
+
+    
+    .order('created_at', { ascending: false });
+
+  return data;
+};
+
+
 
 export const deleteMurmur = async (id: string) => {
   await supabase.from('murmurs').delete().eq('id', id);
