@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import BottomTabNavigator from "./BottomTabNavigator";
+import CreateMurmurScreen from "../screens/app/CreateMurmurScreen";
 
 const AppNavigator = () => {
   const Stack = createNativeStackNavigator();
@@ -11,6 +12,7 @@ const AppNavigator = () => {
       }}
     >
       <Stack.Screen name="Tab" component={BottomTabNavigator} />
+      <Stack.Screen name="CreateMurmur" component={CreateMurmurScreen} />
     </Stack.Navigator>
   );
 }

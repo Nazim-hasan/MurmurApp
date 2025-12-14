@@ -1,32 +1,56 @@
 import { getCurrentUser } from './api';
 import { supabase } from './supabase';
 
-export async function getTimeline(page = 0, pageSize = 10, followedIds: string[] = []) {
-  // Fetch murmurs from followed users
-  const from = page * pageSize;
-  const to = (page + 1) * pageSize - 1;
+import { TMurmur } from '../types';
 
-  let query = supabase
+export const getTimeline = async (
+  limit = 10,
+  offset = 0,
+): Promise<(TMurmur & { liked_by_user: boolean })[]> => {
+  const user = await getCurrentUser();
+  const { data: murmurs, error } = await supabase
     .from('murmurs')
-    .select('id, text, author_id, like_count, created_at')
+    .select(
+      `
+      id,
+      text,
+      like_count,
+      created_at,
+      users!author_id (id, name, avatar_url)
+    `,
+    )
     .order('created_at', { ascending: false })
-    .range(from, to);
+    .range(offset, offset + limit - 1);
 
-  if (followedIds.length > 0) {
-    query = query.in('author_id', followedIds);
+  if (error) {
+    console.error('Error fetching murmurs:', error.message);
+    return [];
   }
 
-  const { data, error } = await query;
-  console.log('query', query)
-  console.log(data)
-  if (error) throw error;
+  if (!murmurs || murmurs.length === 0) return [];
 
-  // Map user names
-  return data.map((m: any) => ({
+  const murmurIds = murmurs.filter(m => m.like_count > 0).map(m => m.id);
+
+  let likedMap: Record<string, boolean> = {};
+  if (murmurIds.length > 0) {
+    const { data: likesData, error: likesError } = await supabase
+      .from('likes')
+      .select('murmur_id')
+      .in('murmur_id', murmurIds)
+      .eq('user_id', user?.id);
+
+    if (!likesError && likesData) {
+      likedMap = likesData.reduce((acc, like) => {
+        acc[like.murmur_id] = true;
+        return acc;
+      }, {} as Record<string, boolean>);
+    }
+  }
+  return murmurs.map(m => ({
     ...m,
-    author_name: m.users?.name,
+    liked_by_user: likedMap[m.id] ?? false,
   }));
-}
+};
 
 export async function toggleLike(murmurId: string) {
   const { data: userData } = await supabase.auth.getUser();
@@ -40,14 +64,18 @@ export async function toggleLike(murmurId: string) {
     .single();
 
   if (existingLike) {
-    await supabase.from('likes').delete().match({ user_id: user.id, murmur_id: murmurId });
+    await supabase
+      .from('likes')
+      .delete()
+      .match({ user_id: user.id, murmur_id: murmurId });
     return false; // unliked
   } else {
-    await supabase.from('likes').insert({ user_id: user.id, murmur_id: murmurId });
+    await supabase
+      .from('likes')
+      .insert({ user_id: user.id, murmur_id: murmurId });
     return true; // liked
   }
 }
-
 
 export const createMurmur = async (text: string) => {
   const user = await getCurrentUser();
@@ -66,13 +94,12 @@ export const createMurmur = async (text: string) => {
   return data;
 };
 
-
 export const getMyMurmurs = async () => {
   const user = await getCurrentUser();
   const { data } = await supabase
     .from('murmurs')
     .select('*')
-    .eq('user_id', user?.id)
+    .eq('author_id', user?.id)
     .order('created_at', { ascending: false });
 
   return data;

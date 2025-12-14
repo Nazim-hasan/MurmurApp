@@ -46,8 +46,9 @@ const murmursSlice = createSlice({
     addMurmurToTop(state, action: PayloadAction<Murmur>) {
       state.timeline.unshift(action.payload);
     },
+    resetMurmurList: () => initialState
   }
 });
 
-export const { setTimeline, appendTimeline, incrementLike, decrementLike, addMurmurToTop } = murmursSlice.actions;
+export const { setTimeline, appendTimeline, incrementLike, decrementLike, addMurmurToTop, resetMurmurList } = murmursSlice.actions;
 export default murmursSlice.reducer;
