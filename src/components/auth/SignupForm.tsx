@@ -1,26 +1,25 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { z } from 'zod';
+import EyeCloseIcon from '../../assets/svg/EyeCloseIcon';
+import LockWithKeyIcon from '../../assets/svg/LockWithKeyIcon';
+import MailIcon from '../../assets/svg/MailIcon';
+import PersonIcon from '../../assets/svg/PersonIcon';
+import { signUp } from '../../lib/api';
+import { setUser } from '../../store/slices/authSlice';
 import { Theme } from '../../theme/Theme';
 import Button from '../common/Button';
 import Input from '../common/Input';
-import { useNavigation } from '@react-navigation/native';
-import { signIn, signUp } from '../../lib/api';
-import { setUser } from '../../store/slices/authSlice';
-import { useDispatch } from 'react-redux';
-import MailIcon from '../../assets/svg/MailIcon';
-import LockWithKeyIcon from '../../assets/svg/LockWithKeyIcon';
-import EyeCloseIcon from '../../assets/svg/EyeCloseIcon';
-import PersonIcon from '../../assets/svg/PersonIcon';
 
 const SignupForm = () => {
   const [error, setError] = useState('');
@@ -59,7 +58,6 @@ const SignupForm = () => {
     navigation.navigate('Login');
   };
 
-  console.log('error', error);
 
   return (
     <KeyboardAvoidingView

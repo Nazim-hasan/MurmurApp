@@ -11,8 +11,10 @@ import {
 import CloseIcon from '../../assets/svg/CloseIcon';
 import { useLikeToggle } from '../../hooks/useLikeToggle';
 import { Theme } from '../../theme/Theme';
+import { useAppSelector } from '../../hooks/hooks';
 
 const MurmurDetailsScreen = () => {
+  const user = useAppSelector(state => state.auth.user);
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
 

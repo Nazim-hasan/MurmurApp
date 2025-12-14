@@ -16,8 +16,6 @@ import {
   getAllRecentUsers,
   unfollowFriendById,
 } from '../../lib/friendApi';
-import { getUserById } from '../../lib/userApi';
-import { supabase } from '../../lib/supabase';
 
 type User = {
   id: string;
@@ -41,7 +39,6 @@ const FriendsScreen = () => {
 
   const getFollowerIds = async () => {
     const ids = await fetchFollowedIds(currentUser?.id);
-    console.log('ids', ids)
     setFollowIds(ids || []);
   };
 
@@ -58,7 +55,6 @@ const FriendsScreen = () => {
   };
 
   const handleFollowToggle = async (userId: string) => {
-    console.log('userId', userId)
     const isFollowing = followIds.includes(userId);
 
     if (isFollowing) {

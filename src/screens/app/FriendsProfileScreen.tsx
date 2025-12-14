@@ -9,21 +9,24 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Container from '../../components/common/Container';
+import ArrowLeft from '../../assets/svg/ArrowLeft';
 import Murmur from '../../components/app/murmur/Murmur';
-import { getUserById } from '../../lib/userApi';
-import { getMurmursByUserId } from '../../lib/murmurApi';
-import { Theme } from '../../theme/Theme';
+import Container from '../../components/common/Container';
 import {
   checkIfFollowing,
   followFriendById,
   unfollowFriendById,
 } from '../../lib/friendApi';
-import ArrowLeft from '../../assets/svg/ArrowLeft';
+import { getMurmursByUserId } from '../../lib/murmurApi';
+import { getUserById } from '../../lib/userApi';
+import { Theme } from '../../theme/Theme';
+import { useAppSelector } from '../../hooks/hooks';
 
 const FriendsProfileScreen = () => {
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
+
+  const user = useAppSelector(state => state.auth.user);
   const friendId = route.params?.friendId;
 
   const [userDetail, setUserDetail] = useState<any>(null);
@@ -68,7 +71,6 @@ const FriendsProfileScreen = () => {
         flex: 1,
       }}
     >
-      {/* Cover */}
       <TouchableOpacity
         onPress={handleBack}
         style={[
@@ -83,7 +85,6 @@ const FriendsProfileScreen = () => {
       <View style={styles.coverContainer}>
         <View style={styles.coverImage} />
 
-        {/* Avatar */}
         <View style={styles.avatarWrapper}>
           <FastImage
             source={{
@@ -94,7 +95,6 @@ const FriendsProfileScreen = () => {
         </View>
       </View>
 
-      {/* Profile Info */}
       <View style={styles.profileInfo}>
         <Text style={styles.nameText}>{userDetail?.name || 'Anonymous'}</Text>
 
@@ -114,18 +114,18 @@ const FriendsProfileScreen = () => {
           </View>
         </View>
 
-        {/* Follow Button (logic-ready) */}
-        <TouchableOpacity
-          style={styles.followButton}
-          onPress={handleFollowToggle}
-        >
-          <Text style={styles.followButtonText}>
-            {isFollowing ? 'Unfollow' : 'Follow'}
-          </Text>
-        </TouchableOpacity>
+        {user?.id !== userDetail?.id && (
+          <TouchableOpacity
+            style={styles.followButton}
+            onPress={handleFollowToggle}
+          >
+            <Text style={styles.followButtonText}>
+              {isFollowing ? 'Unfollow' : 'Follow'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
-      {/* Murmurs */}
       <View style={styles.murmurSection}>
         <FlatList
           data={murmurs}

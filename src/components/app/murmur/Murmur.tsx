@@ -5,6 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useLikeToggle } from '../../../hooks/useLikeToggle';
 import { TMurmur } from '../../../types';
 import { Theme } from '../../../theme/Theme';
+import { useAppSelector } from '../../../hooks/hooks';
 
 type MurmurProps = {
   item: TMurmur;
@@ -12,6 +13,7 @@ type MurmurProps = {
 };
 
 const Murmur: React.FC<MurmurProps> = ({ item }) => {
+  const user = useAppSelector(state => state.auth.user);
   const navigation = useNavigation<any>();
   const { liked, likeCount, toggleLike } = useLikeToggle({
     murmurId: item?.id,
@@ -26,9 +28,11 @@ const Murmur: React.FC<MurmurProps> = ({ item }) => {
   };
 
   const handleNavigateToProfile = () => {
-    navigation.navigate('FriendsProfile', {
-      friendId: item?.users?.id,
-    });
+    item?.users?.id === user?.id
+      ? navigation.navigate('Profile')
+      : navigation.navigate('FriendsProfile', {
+          friendId: item?.users?.id,
+        });
   };
 
   return (

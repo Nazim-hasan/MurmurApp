@@ -132,7 +132,6 @@ const Input = ({
               secureTextEntry={!isPasswordVisible}
               {...props}
             />
-            {/* Right Icon / Password Toggle */}
             {secureTextEntry ? (
               <TouchableOpacity
                 onPress={() => setIsPasswordVisible(!isPasswordVisible)}
@@ -148,13 +147,11 @@ const Input = ({
                 </TouchableOpacity>
               )
             )}
-            {/* {rightIcon && rightIcon(isFocused)} */}
           </View>
           {error && (
             <Text
               style={{
                 color: Theme.colors.danger,
-                // ...Theme.typography.regular_12,
                 marginTop: 5,
                 marginLeft: 5,
               }}
