@@ -1,97 +1,209 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 📣 MurmurApp - Connect, Share, and Engage
 
-# Getting Started
+A feature-rich React Native mobile application for posting and interacting with "murmurs" (short messages similar to tweets), with full authentication and offline support.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+![React Native](https://img.shields.io/badge/React%20Native-0.83+-blue.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)
+![Redux](https://img.shields.io/badge/Redux%20Toolkit-2.0+-purple.svg)
+![Supabase](https://img.shields.io/badge/Supabase-2.0+-green.svg)
+![MMKV](https://img.shields.io/badge/MMKV-2.0+-yellow.svg)
 
-## Step 1: Start Metro
+## ✨ Features
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### 🐦 Murmur Module
+- **Post Murmurs**: Users can post unlimited short messages.
+- **Delete Own Murmurs**: Only the user who posted can delete a murmur.
+- **Like Murmurs**: Users can like other users’ murmurs.
+- **Timeline**: Shows murmurs from followed users with pagination (10 per page).
+- **Murmur Details**: View individual murmur information including like counts.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### 👥 User Module
+- **Authentication**: Sign-up, login, and secure session management using Supabase Auth.
+- **Own Profile**: View user info, followers/following count, and own murmurs.
+- **Other Profiles**: View other users’ info and their posted murmurs.
+- **Follow Users**: Follow/unfollow other users to populate the timeline.
 
-```sh
-# Using npm
-npm start
+### 🎨 UI/UX Highlights
+- **Responsive Layouts**: Optimized for different screen sizes.
+- **Intuitive Navigation**: Clear navigation using React Navigation.
+- **Smooth Interactions**: Optimized transitions between screens.
+- **Lightweight Design**: Focused on functionality and usability.
 
-# OR using Yarn
-yarn start
-```
+## 🛠️ Tech Stack
 
-## Step 2: Build and run your app
+- **Framework**: React Native CLI
+- **Language**: TypeScript
+- **State Management**: Redux Toolkit + Redux Persist
+- **Backend**: Supabase (Authentication, Database, Realtime)
+- **Storage**: MMKV for caching and offline support
+- **Navigation**: React Navigation v6
+- **UI Components**: React Native Modal, Pressable, FlatList
+- **Styling**: Native components and custom styling
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+## 📋 Prerequisites
 
-### Android
+- Node.js (v16 or higher)  
+- npm or yarn  
+- React Native CLI  
+- Android Studio (for Android development)  
+- Xcode (for iOS development, macOS only)  
+- JDK 11 or higher  
 
-```sh
-# Using npm
-npm run android
+## 🚀 Installation
 
-# OR using Yarn
+### 1. Clone the Repository
+```bash
+git clone https://github.com/Nazim-hasan/MurmurApp.git
+cd MurmurApp
+git checkout develop
+
+2. Install Dependencies
+yarn
+
+3. Install iOS Pods (iOS only)
+cd ios && pod install && cd ..
+
+PUBLIC_SUPABASE_KEY=<your-supabase-anon-key>
+
+📦 Project Structure
+MurmurApp/
+├── src/
+│   ├── api/               # Supabase API functions
+│   │   └── murmurApi.ts
+│   ├── components/        # Reusable components
+│   │   ├── MurmurCard.tsx
+│   │   ├── UserCard.tsx
+│   ├── navigation/        # React Navigation setup
+│   │   └── index.tsx
+│   ├── redux/             # Redux store, slices, and hooks
+│   │   ├── store.ts
+│   │   └── slices/
+│   │       ├── murmurSlice.ts
+│   │       └── userSlice.ts
+│   ├── screens/           # App screens
+│   │   ├── TimelineScreen.tsx
+│   │   ├── MurmurDetailScreen.tsx
+│   │   ├── UserProfileScreen.tsx
+│   │   ├── AuthScreen.tsx
+│   ├── storage/           # MMKV storage setup
+│   └── types/             # TypeScript types
+├── App.tsx                # Root component
+├── babel.config.js
+├── tsconfig.json
+└── package.json
+
+🏃‍♂️ Running the Application
+Start Metro Bundler
+yarn start --reset-cache
+
+Run on Android
 yarn android
-```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
+Run on iOS
 yarn ios
-```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+📱 App Screens
+1. Timeline
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+List of murmurs from followed users
 
-## Step 3: Modify your app
+LIKE button for each murmur
 
-Now that you have successfully run the app, let's make changes!
+Pagination (10 per page)
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+Pull-to-refresh to reload
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+2. Murmur Detail
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+Detailed view of murmur text, likes, and author
 
-## Congratulations! :tada:
+Option to like the murmur
 
-You've successfully run and modified your React Native App. :partying_face:
+3. User Profile
 
-### Now what?
+Own profile: user info, followers/following count, own murmurs, delete button
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+Other user profile: user info, followers/following count, their murmurs
 
-# Troubleshooting
+Follow/unfollow button
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+4. Authentication
 
-# Learn More
+Sign-up and login screens
 
-To learn more about React Native, take a look at the following resources:
+Secure token storage with MMKV and Supabase Auth
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+🗄️ State Management
+
+Redux Toolkit for global state
+
+Slices:
+
+userSlice → current user, session info, followers/following
+
+murmurSlice → timeline murmurs, own murmurs, likes
+
+Redux Persist + MMKV → fast state persistence and offline support
+
+🔌 Offline Support
+
+Cached murmurs using MMKV
+
+Timeline and user data accessible offline
+
+Pull-to-refresh updates cache
+
+Offline indicators in UI
+
+📦 Dependencies
+Core Dependencies
+{
+  "@supabase/supabase-js": "^2.x",
+  "@reduxjs/toolkit": "^2.x",
+  "react-redux": "^9.x",
+  "redux-persist": "^6.x",
+  "react-native-mmkv": "^2.x",
+  "react-navigation": "^6.x",
+  "react-native-modal": "^13.x"
+}
+
+Dev Dependencies
+{
+  "typescript": "^5.x",
+  "@types/react": "^18.x",
+  "@types/react-native": "^0.72.x"
+}
+
+🚧 Troubleshooting
+
+Clear Metro cache:
+
+yarn start --reset-cache
+
+
+Android build clean:
+
+cd android && ./gradlew clean && cd ..
+yarn android
+
+
+iOS pods clean & install:
+
+cd ios && pod deintegrate && pod install && cd ..
+yarn ios
+
+📄 License
+
+MIT License - see LICENSE
+
+👨‍💻 Author
+
+Nazim Hasan
+
+GitHub: @nazim-hasan
+
+Email: connect.nazimhasan@gmail.com
+
+LinkedIn: Nazim Hasan
+
+Made with ❤️ using React Native, Supabase, and Redux Toolkit
